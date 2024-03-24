@@ -1,0 +1,33 @@
+.sidebar-hover-color:hover {
+  background-color: rgb(197, 197, 197);
+  cursor: pointer;
+}
+
+.create-hover-color:hover {
+  background-color: rgb(238, 238, 238);
+  cursor: pointer;
+}
+
+.comment-bg{
+  background-color: #efefef;
+}
+
+.dropzone {
+  height: 30vh;
+  border: 2px dashed lightgrey;
+  border-radius: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  -webkit-transition: background-color 100ms linear;
+  -ms-transition: background-color 100ms linear;
+  transition: background-color 100ms linear;
+}
+
+.upload .active {
+  background-color: whitesmoke;
+  -webkit-transition: background-color 100ms linear;
+  -ms-transition: background-color 100ms linear;
+  transition: background-color 100ms linear;
+}
