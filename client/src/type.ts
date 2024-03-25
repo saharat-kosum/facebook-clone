@@ -7,7 +7,7 @@ export interface AuthInitialState {
 }
 
 export interface PostInitialState {
-  post: PostType[];
+  posts: PostType[];
   loading: boolean;
 }
 

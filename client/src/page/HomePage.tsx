@@ -59,6 +59,7 @@ function HomePage() {
 
   const commentPost = async (id: string, commentProp: string) => {
     dispatch(setLoading(true));
+    setComment("");
     if (!userData) {
       return;
     }
