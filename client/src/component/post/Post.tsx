@@ -1,27 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { PostType } from "../../type";
-import { useAppSelector } from "../../redux/Store";
+import { CommentType, PostType } from "../../type";
+import { AppDispatch, useAppSelector } from "../../redux/Store";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import CommentComponent from "./CommentComponent";
+import {
+  commentPostThunk,
+  deletePostThunk,
+  likePostThunk,
+} from "../../redux/postSlice";
+import { useDispatch } from "react-redux";
 
 interface PostProps {
-  props: PostType;
-  comment: string;
-  deletePost: (postId: string) => void;
-  likePost: (postId: string) => void;
-  commentPost: (postId: string, comment: string) => void;
-  setComment: (comment: string) => void;
+  post: PostType;
 }
 
-function Post({
-  props,
-  comment,
-  deletePost,
-  likePost,
-  commentPost,
-  setComment,
-}: PostProps) {
+function Post({ post }: PostProps) {
   const profilePicture = useAppSelector((state) => state.auth.mockIMG);
   const prefix_img_url = process.env.REACT_APP_PREFIX_URL_IMG;
   const [createDate, setCreateDate] = useState("");
@@ -29,27 +23,47 @@ function Post({
   const [isLike, setIsLike] = useState(false);
   const userData = useAppSelector((state) => state.auth.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    if (props.createdAt) {
+    if (post.createdAt) {
       const formattedDate = format(
-        new Date(props.createdAt),
+        new Date(post.createdAt),
         "dd MMM yyyy hh:mm a"
       );
       setCreateDate(formattedDate);
     }
-  }, [props]);
+  }, [post]);
 
   useEffect(() => {
-    if (userData && userData._id && props.likes) {
-      const like = props.likes.includes(userData._id);
+    if (userData && userData._id && post.likes) {
+      const like = post.likes.includes(userData._id);
       setIsLike(like);
     }
-    // eslint-disable-next-line
-  }, [props]);
+  }, [post, userData]);
 
   const userNavigator = (id: string) => {
     navigate(`/profile/${id}`);
+  };
+
+  const commentPost = async (id: string, commentProp: string) => {
+    if (userData) {
+      const newComment: CommentType = {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        userPicturePath: userData.picturePath,
+        description: commentProp,
+      };
+      const commentPayload = { id, newComment };
+      dispatch(commentPostThunk(commentPayload));
+    }
+  };
+
+  const deletePost = async (id: string) => {
+    const result = window.confirm("Are you sure you want to delete this post?");
+    if (result) {
+      dispatch(deletePostThunk(id));
+    }
   };
 
   return (
@@ -62,14 +76,14 @@ function Post({
           alt="profile"
           className="rounded-circle border hover-cursor"
           src={
-            props.userPicturePath
-              ? prefix_img_url + props?.userPicturePath
+            post.userPicturePath
+              ? prefix_img_url + post?.userPicturePath
               : profilePicture
           }
           style={{ width: "36px", height: "36px", objectFit: "cover" }}
           onClick={() => {
-            if (props.userId) {
-              userNavigator(props.userId);
+            if (post.userId) {
+              userNavigator(post.userId);
             }
           }}
         />
@@ -78,12 +92,12 @@ function Post({
             <div
               className="fw-bold text-capitalize hover-cursor"
               onClick={() => {
-                if (props.userId) {
-                  userNavigator(props.userId);
+                if (post.userId) {
+                  userNavigator(post.userId);
                 }
               }}
             >
-              {props.firstName} {props.lastName}
+              {post.firstName} {post.lastName}
             </div>
             <div
               className="text-black-50"
@@ -99,8 +113,8 @@ function Post({
             ></i>
             <i
               onClick={() => {
-                if (props._id) {
-                  deletePost(props._id);
+                if (post._id) {
+                  deletePost(post._id);
                 }
               }}
               className="bi bi-x-lg create-hover-color rounded-circle p-2"
@@ -109,27 +123,27 @@ function Post({
           </div>
         </div>
       </div>
-      <div>{props.description}</div>
-      {props.picturePath && (
+      <div>{post.description}</div>
+      {post.picturePath && (
         <img
           alt="post"
           className="w-100 h-100 rounded mt-1"
-          src={prefix_img_url + props?.picturePath}
+          src={prefix_img_url + post?.picturePath}
           style={{ width: "36px", height: "36px", objectFit: "cover" }}
         />
       )}
       <div className="d-flex justify-content-between w-100 my-2">
         <div>
-          {props.likes && props.likes?.length > 0 && (
+          {post.likes && post.likes?.length > 0 && (
             <>
               <i className="bi bi-heart-fill text-danger me-1"></i>
-              {props.likes.length} Likes
+              {post.likes.length} Likes
             </>
           )}
         </div>
         <div>
-          {props.comments && props.comments?.length > 0 && (
-            <>{props.comments.length} Comments</>
+          {post.comments && post.comments?.length > 0 && (
+            <>{post.comments.length} Comments</>
           )}
         </div>
       </div>
@@ -137,8 +151,9 @@ function Post({
         <div
           className="d-flex my-1 align-items-center gap-1 create-hover-color rounded p-1 w-100 justify-content-center"
           onClick={() => {
-            if (props._id) {
-              likePost(props._id);
+            if (post._id && userData && userData._id) {
+              const likePostProp = { id: post._id, userId: userData._id };
+              dispatch(likePostThunk(likePostProp));
             }
           }}
         >
@@ -177,16 +192,16 @@ function Post({
         <i
           className="bi bi-send-fill create-hover-color rounded-circle p-2"
           onClick={() => {
-            if (props._id) {
-              commentPost(props._id, commentInPost);
+            if (post._id) {
+              commentPost(post._id, commentInPost);
               setCommentInPost("");
             }
           }}
         ></i>
       </div>
-      {props.comments &&
-        props.comments.length > 0 &&
-        props.comments.map((comment, index) => (
+      {post.comments &&
+        post.comments.length > 0 &&
+        post.comments.map((comment, index) => (
           <CommentComponent key={index} comment={comment} />
         ))}
     </div>

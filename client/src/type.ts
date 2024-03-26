@@ -59,3 +59,9 @@ export interface ChatHistory {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface CreatePostProps {
+  userId: string;
+  description: string;
+  uploadedFile: File | null;
+}

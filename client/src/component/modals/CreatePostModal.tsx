@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from "react";
 import FileDropzone from "../DropZone";
 import { AppDispatch, useAppSelector } from "../../redux/Store";
-import { PostPayload, PostType } from "../../type";
+import { CreatePostProps, PostPayload, PostType } from "../../type";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setLoading } from "../../redux/authSlice";
+import { createPost } from "../../redux/postSlice";
 
-interface PostModalProps {
-  posts: PostType[] | undefined;
-  setPosts: (posts: PostType[]) => void;
-}
-
-function CreatePostModal({ posts, setPosts }: PostModalProps) {
+function CreatePostModal() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedFileURL, setUploadedFileURL] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -35,32 +31,13 @@ function CreatePostModal({ posts, setPosts }: PostModalProps) {
   }, [uploadedFile]);
 
   const handlePost = async () => {
-    dispatch(setLoading(true));
-    try {
-      const payload: PostPayload = {
-        userId: userData?._id,
-        description: description,
+    if (userData && userData._id) {
+      const creatPostProps: CreatePostProps = {
+        userId: userData._id,
+        description,
+        uploadedFile,
       };
-      const formData = new FormData();
-      if (uploadedFile) {
-        formData.append("file", uploadedFile);
-      }
-      formData.append("postData", JSON.stringify(payload));
-
-      const response = await axios.post(`/posts`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      const data: PostType = response.data;
-      if (posts) {
-        const newPost = [data, ...posts];
-        setPosts(newPost);
-      }
-    } catch (error) {
-      console.error("Error create post", error);
-    } finally {
-      dispatch(setLoading(false));
+      dispatch(createPost(creatPostProps));
       setUploadedFileURL("");
       setDescription("");
     }

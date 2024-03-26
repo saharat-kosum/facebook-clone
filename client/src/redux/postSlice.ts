@@ -1,5 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { CommentType, PostInitialState, PostType } from "../type";
+import {
+  CommentType,
+  CreatePostProps,
+  PostInitialState,
+  PostPayload,
+  PostType,
+} from "../type";
 import axios from "axios";
 
 const initialState: PostInitialState = {
@@ -43,6 +49,28 @@ export const deletePostThunk = createAsyncThunk(
   }
 );
 
+export const createPost = createAsyncThunk(
+  "postSlice/createPost",
+  async ({ userId, description, uploadedFile }: CreatePostProps) => {
+    const payload: PostPayload = {
+      userId,
+      description,
+    };
+    const formData = new FormData();
+    if (uploadedFile) {
+      formData.append("file", uploadedFile);
+    }
+    formData.append("postData", JSON.stringify(payload));
+    const response = await axios.post(`/posts`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    const data: PostType = response.data;
+    return data;
+  }
+);
+
 export const postSlice = createSlice({
   name: "post",
   initialState,
@@ -54,12 +82,9 @@ export const postSlice = createSlice({
         state.loading = false;
       })
       .addCase(likePostThunk.fulfilled, (state, action) => {
-        const updatedPosts = state.posts.map((post) => {
-          if (post._id === action.payload._id) {
-            return action.payload;
-          }
-          return post;
-        });
+        const updatedPosts = state.posts.map((post) =>
+          post._id === action.payload._id ? action.payload : post
+        );
         state.posts = updatedPosts;
         state.loading = false;
       })
@@ -78,6 +103,11 @@ export const postSlice = createSlice({
           (post) => post._id !== action.payload
         );
         state.posts = filter;
+        state.loading = false;
+      })
+      .addCase(createPost.fulfilled, (state, action) => {
+        const newPost = [action.payload, ...state.posts];
+        state.posts = newPost;
         state.loading = false;
       })
       .addMatcher(
