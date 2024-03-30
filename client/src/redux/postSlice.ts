@@ -21,6 +21,14 @@ export const getFeedPost = createAsyncThunk(
   }
 );
 
+export const getProfilePost = createAsyncThunk(
+  "postSlice/fetchProfilePost",
+  async (userId: string) => {
+    const { data } = await axios.get(`/posts/${userId}/posts`);
+    return data;
+  }
+);
+
 export const likePostThunk = createAsyncThunk(
   "postSlice/likePost",
   async ({ id, userId }: { id: string; userId: string }) => {
@@ -44,7 +52,7 @@ export const commentPostThunk = createAsyncThunk(
 export const deletePostThunk = createAsyncThunk(
   "postSlice/deletePost",
   async (id: string) => {
-    const response = await axios.delete(`/posts/delete/${id}`);
+    await axios.delete(`/posts/delete/${id}`);
     return id;
   }
 );
@@ -78,6 +86,10 @@ export const postSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getFeedPost.fulfilled, (state, action) => {
+        state.posts = action.payload;
+        state.loading = false;
+      })
+      .addCase(getProfilePost.fulfilled, (state, action) => {
         state.posts = action.payload;
         state.loading = false;
       })

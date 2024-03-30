@@ -6,6 +6,7 @@ const initialState: AuthInitialState = {
   mode: "light",
   loading: false,
   user: null,
+  profile: null,
   token: sessionStorage.getItem("userToken"),
   mockIMG:
     "https://img.freepik.com/free-vector/illustration-businessman_53876-5856.jpg?w=826&t=st=1693129793~exp=1693130393~hmac=7346bd884e9145dfe06641270fd59554806208016d3acec6f42b5aebba8c28f7",
@@ -15,6 +16,14 @@ export const getUserDetail = createAsyncThunk(
   "authSlice/fetchUser",
   async () => {
     const { data } = await axios.get(`/users`);
+    return data;
+  }
+);
+
+export const getProfile = createAsyncThunk(
+  "authSlice/fetchProfile",
+  async (userId: string) => {
+    const { data } = await axios.get(`/users/friend/${userId}`);
     return data;
   }
 );
@@ -44,6 +53,10 @@ export const authSlice = createSlice({
       .addCase(getUserDetail.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
+      })
+      .addCase(getProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.profile = action.payload;
       })
       .addMatcher(
         (action) =>

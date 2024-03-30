@@ -1,6 +1,7 @@
 export interface AuthInitialState {
   mode: string;
   user: UserType | null;
+  profile: UserType | null;
   mockIMG: string;
   loading: boolean;
   token: string | null;

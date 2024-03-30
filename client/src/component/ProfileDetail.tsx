@@ -3,34 +3,46 @@ import { useAppSelector } from "../redux/Store";
 import { format } from "date-fns";
 import { UserType } from "../type";
 
-function ProfileDetail(props : UserType) {
+interface ProfileProps {
+  props: UserType;
+}
+
+function ProfileDetail({ props }: ProfileProps) {
   const prefix_img_url = process.env.REACT_APP_PREFIX_URL_IMG;
   const profilePicture = useAppSelector((state) => state.auth.mockIMG);
 
-  const parseDate = (date : Date) => {
-    const formattedDate = format(
-      new Date(date),
-      "dd MMM yyyy"
-    );
-    return formattedDate
-  }
+  const parseDate = (date: Date) => {
+    const formattedDate = format(new Date(date), "dd MMM yyyy");
+    return formattedDate;
+  };
 
   const convertTimestampToDate = (timestamp: string): string => {
-    const timestampInt = parseInt(timestamp)
-    const dateRegex = /^(0[1-9]|[12][0-9]|3[01])\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s\d{4}$/;
+    const timestampInt = parseInt(timestamp);
+    const dateRegex =
+      /^(0[1-9]|[12][0-9]|3[01])\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s\d{4}$/;
     if (dateRegex.test(timestamp)) {
-      return timestamp
+      return timestamp;
     }
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
     ];
     const date = new Date(timestampInt * 1000);
-    const day = date.getDate().toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, "0");
     const month = months[date.getMonth()];
     const year = date.getFullYear();
 
-  return `${day} ${month} ${year}`;
+    return `${day} ${month} ${year}`;
   };
 
   return (
@@ -59,13 +71,15 @@ function ProfileDetail(props : UserType) {
         </h4>
         <h5>{props.occupation}</h5>
       </div>
-      {props.createdAt ? 
-      <p className="mt-4">
-        <i className="bi bi-clock-fill me-2"></i>Joined on {parseDate(props.createdAt)}
-      </p>
-      : null}
+      {props.createdAt ? (
+        <p className="mt-4">
+          <i className="bi bi-clock-fill me-2"></i>Joined on{" "}
+          {parseDate(props.createdAt)}
+        </p>
+      ) : null}
       <p>
-        <i className="bi bi-geo-alt-fill me-2"></i>{props.location}
+        <i className="bi bi-geo-alt-fill me-2"></i>
+        {props.location}
       </p>
       <p>
         <i className="bi bi-envelope-fill me-2"></i>

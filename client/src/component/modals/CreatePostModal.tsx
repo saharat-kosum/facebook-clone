@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import FileDropzone from "../DropZone";
 import { AppDispatch, useAppSelector } from "../../redux/Store";
-import { CreatePostProps, PostPayload, PostType } from "../../type";
-import axios from "axios";
+import { CreatePostProps } from "../../type";
 import { useDispatch } from "react-redux";
-import { setLoading } from "../../redux/authSlice";
 import { createPost } from "../../redux/postSlice";
 
 function CreatePostModal() {

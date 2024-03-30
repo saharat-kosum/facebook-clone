@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import NavBar from "../component/NavBar";
 import SideBar from "../component/sideBar/SideBar";
 import Contact from "../component/Contact";
@@ -17,7 +17,7 @@ function HomePage() {
   const isLaptop = useMediaQuery("(min-width: 1070px)");
   const userData = useAppSelector((state) => state.auth.user);
   const authLoading = useAppSelector((state) => state.auth.loading);
-  const postLoading = useAppSelector((state) => state.auth.loading);
+  const postLoading = useAppSelector((state) => state.post.loading);
   const token = useAppSelector((state) => state.auth.token);
   const posts = useAppSelector((state) => state.post.posts);
   const dispatch = useDispatch<AppDispatch>();
