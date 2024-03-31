@@ -5,6 +5,7 @@ export interface AuthInitialState {
   mockIMG: string;
   loading: boolean;
   token: string | null;
+  friends: UserType[];
 }
 
 export interface PostInitialState {

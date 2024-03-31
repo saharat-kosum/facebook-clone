@@ -4,12 +4,11 @@ import NavBar from "../component/NavBar";
 import Loading from "../component/Loading";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { setLoading, setLogIn } from "../redux/authSlice";
+import { getFriends, getUserDetail } from "../redux/authSlice";
 import { ChatHistory, UserType } from "../type";
 import { useMediaQuery } from "../utils/useMediaQuery";
 
 function ChatPage() {
-  const [friends, setFriends] = useState<UserType[] | undefined>(undefined);
   const userData = useAppSelector((state) => state.auth.user);
   const [isLoadingChat, setIsLoadingChat] = useState(false);
   const prefixWS = process.env.REACT_APP_PREFIX_WS;
@@ -20,36 +19,24 @@ function ChatPage() {
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
   const prefix_img_url = process.env.REACT_APP_PREFIX_URL_IMG;
   const profilePicture = useAppSelector((state) => state.auth.mockIMG);
-  const isLoading = useAppSelector((state) => state.auth.loading);
+  const authLoading = useAppSelector((state) => state.auth.loading);
   const token = useAppSelector((state) => state.auth.token);
+  const friends = useAppSelector((state) => state.auth.friends);
   const isLaptop = useMediaQuery("(min-width: 1024px)");
   const isMobile = useMediaQuery("(min-width: 425px)");
   const isTablet = useMediaQuery("(min-width: 768px)");
 
   useEffect(() => {
-    const fetchData = async () => {
-      dispatch(setLoading(true));
-      try {
-        if (token && token.length > 0) {
-          if (!userData) {
-            const { data } = await axios.get(`/users`);
-            dispatch(setLogIn(data));
-          } else {
-            const { data } = await axios.get(`/users/${userData._id}/friends`);
-            setFriends(data);
-          }
-        } else {
-          window.location.replace("/");
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        dispatch(setLoading(false));
+    if (token && token.length > 0) {
+      if (!userData || !userData._id) {
+        dispatch(getUserDetail());
+      } else {
+        dispatch(getFriends(userData._id));
       }
-    };
-
-    fetchData();
-  }, [token, userData, dispatch, setFriends]);
+    } else {
+      window.location.replace("/");
+    }
+  }, [token, userData, dispatch]);
 
   useEffect(() => {
     if (prefixWS && token) {
@@ -110,7 +97,7 @@ function ChatPage() {
   return (
     <>
       <NavBar />
-      <Loading isShow={isLoading} />
+      <Loading isShow={authLoading} />
       <div className="d-flex bg-white" style={{ minHeight: "94vh" }}>
         <div className="w-25 border-end">
           <div className="d-flex justify-content-between align-items-center p-2 p-sm-3">
