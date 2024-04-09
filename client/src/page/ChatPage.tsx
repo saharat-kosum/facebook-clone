@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { getFriends, getUserDetail } from "../redux/authSlice";
 import { ChatHistory, UserType } from "../type";
 import { useMediaQuery } from "../utils/useMediaQuery";
+import Spinner from "../component/Spinner";
 
 function ChatPage() {
   const userData = useAppSelector((state) => state.auth.user);
@@ -197,22 +198,28 @@ function ChatPage() {
                   <i className="bi bi-info-circle-fill p-2 hover-cursor"></i>
                 </div>
               </div>
-              <div className="p-3 flex-grow-1 d-flex flex-column justify-content-end overflow-auto">
-                {chatHistory.map((chat, index) => (
-                  <div
-                    className={`${
-                      chat.sender === userData._id
-                        ? "align-self-end bg-primary"
-                        : "bg-secondary"
-                    } 
+              {isLoadingChat ? (
+                <div className="d-flex justify-content-center h-100 align-items-center">
+                  <Spinner />
+                </div>
+              ) : (
+                <div className="p-3 flex-grow-1 d-flex flex-column justify-content-end overflow-auto">
+                  {chatHistory.map((chat, index) => (
+                    <div
+                      className={`${
+                        chat.sender === userData._id
+                          ? "align-self-end bg-primary"
+                          : "bg-secondary"
+                      } 
                     mt-1 py-1 px-3 rounded-pill text-white text-break`}
-                    style={{ width: "fit-content" }}
-                    key={index}
-                  >
-                    {chat.message}
-                  </div>
-                ))}
-              </div>
+                      style={{ width: "fit-content" }}
+                      key={index}
+                    >
+                      {chat.message}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
             <form
               className="d-flex gap-2 mx-3 mb-3"

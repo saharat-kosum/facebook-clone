@@ -8,6 +8,7 @@ import { setLoading, setLogIn, setToken } from "../redux/authSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector } from "../redux/Store";
 import { useNavigate } from "react-router-dom";
+import Toast from "../component/Toast";
 
 function IndexPage() {
   const isTablet = useMediaQuery("(min-width: 767px)");
@@ -133,26 +134,7 @@ function IndexPage() {
           <b>Create a Page</b> for a celebrity, brand or business.
         </div>
       </div>
-      <div
-        className={`toast align-items-center position-fixed end-0 bottom-0 mx-sm-5 mb-4 mx-1`}
-        role="alert"
-        aria-live="assertive"
-        aria-atomic="true"
-        id="liveToast"
-        style={{ zIndex: "9999" }}
-      >
-        <div className="d-flex">
-          <div className="toast-body">
-            {isSuccess ? "Sign Up Success!" : "Sign Up Failed!"}
-          </div>
-          <button
-            type="button"
-            className="btn-close me-2 m-auto"
-            data-bs-dismiss="toast"
-            aria-label="Close"
-          ></button>
-        </div>
-      </div>
+      <Toast message={isSuccess ? "Sign Up Success!" : "Sign Up Failed!"} />
     </div>
   );
 }
