@@ -1,10 +1,12 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { AuthInitialState, UserType } from "../type";
+import { AuthInitialState, UserType, RegisterProps } from "../type";
 import axios from "axios";
 
 const initialState: AuthInitialState = {
   mode: "light",
   loading: false,
+  isLoginSuccess: false,
+  isRegisterSuccess: false,
   user: null,
   profile: null,
   friends: [],
@@ -33,6 +35,32 @@ export const getFriends = createAsyncThunk(
   "authSlice/fetchFriends",
   async (userId: string) => {
     const { data } = await axios.get(`/users/${userId}/friends`);
+    return data;
+  }
+);
+
+export const loginHandle = createAsyncThunk(
+  "authSlice/loginHandle",
+  async (user: { email: string; password: string }) => {
+    const { data } = await axios.post(`/auth/login`, user);
+    sessionStorage.setItem("userToken", data.token);
+    return data;
+  }
+);
+
+export const registerHandle = createAsyncThunk(
+  "authSlice/loginHandle",
+  async ({ user, uploadedFile }: RegisterProps) => {
+    const formData = new FormData();
+    if (uploadedFile) {
+      formData.append("file", uploadedFile);
+    }
+    formData.append("userData", JSON.stringify(user));
+    const { data } = await axios.post(`/auth/register`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return data;
   }
 );
@@ -70,6 +98,20 @@ export const authSlice = createSlice({
       .addCase(getFriends.fulfilled, (state, action) => {
         state.friends = action.payload;
         state.loading = false;
+      })
+      .addCase(loginHandle.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.isLoginSuccess = true;
+      })
+      .addCase(loginHandle.rejected, (state) => {
+        state.isLoginSuccess = false;
+      })
+      .addCase(registerHandle.fulfilled, (state) => {
+        state.isRegisterSuccess = true;
+      })
+      .addCase(registerHandle.rejected, (state) => {
+        state.isRegisterSuccess = false;
       })
       .addMatcher(
         (action) =>

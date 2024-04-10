@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import picture from "../assets/facebookIcon.svg";
 import { useMediaQuery } from "../utils/useMediaQuery";
 import CreateAccount from "../component/modals/CreateAccount";
 import Loading from "../component/Loading";
-import axios, { AxiosError } from "axios";
-import { setLoading, setLogIn, setToken } from "../redux/authSlice";
+import { loginHandle, setLoading } from "../redux/authSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector } from "../redux/Store";
 import { useNavigate } from "react-router-dom";
@@ -12,44 +11,29 @@ import Toast from "../component/Toast";
 
 function IndexPage() {
   const isTablet = useMediaQuery("(min-width: 767px)");
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isLoginFailed, setIsLoginFailed] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const isLoading = useAppSelector((state) => state.auth.loading);
+  const LoginSuccess = useAppSelector((state) => state.auth.isLoginSuccess);
+  const RegisterSuccess = useAppSelector(
+    (state) => state.auth.isRegisterSuccess
+  );
   const [user, setUser] = useState({
     email: "",
     password: "",
   });
 
-  const saveToken = (value: string) => {
-    sessionStorage.setItem("userToken", value);
-    navigate("/home");
-  };
+  useEffect(() => {
+    if (LoginSuccess) {
+      navigate("/home");
+    }
+  }, [LoginSuccess]);
 
   const logInHandle = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
     if (form.checkValidity()) {
-      dispatch(setLoading(true));
-      try {
-        const response = await axios.post(`/auth/login`, user);
-        const data = await response.data;
-
-        dispatch(setLogIn(data.user));
-        dispatch(setToken(data.token));
-        saveToken(data.token);
-      } catch (error) {
-        console.error(error);
-        if (axios.isAxiosError(error)) {
-          const axiosError = error as AxiosError;
-          if (axiosError.response?.status) {
-            setIsLoginFailed(true);
-          }
-        }
-      } finally {
-        dispatch(setLoading(false));
-      }
+      dispatch(loginHandle(user));
     } else {
       dispatch(setLoading(false));
       form.classList.add("was-validated");
@@ -66,7 +50,7 @@ function IndexPage() {
 
   return (
     <div className="container" style={{ height: "100vh" }}>
-      <CreateAccount setIsSuccessFull={setIsSuccess} />
+      <CreateAccount />
       <Loading isShow={isLoading} />
       <div
         className={`d-flex justify-content-evenly align-items-center ${
@@ -111,7 +95,7 @@ function IndexPage() {
                   required
                 />
                 <div className="invalid-feedback">Password is required.</div>
-                {isLoginFailed && (
+                {LoginSuccess && (
                   <div className="mt-1 text-danger">
                     Invalid E-mail or Password
                   </div>
@@ -134,7 +118,9 @@ function IndexPage() {
           <b>Create a Page</b> for a celebrity, brand or business.
         </div>
       </div>
-      <Toast message={isSuccess ? "Sign Up Success!" : "Sign Up Failed!"} />
+      <Toast
+        message={RegisterSuccess ? "Sign Up Success!" : "Sign Up Failed!"}
+      />
     </div>
   );
 }

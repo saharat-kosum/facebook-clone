@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { parseISO, format } from "date-fns";
-import axios from "axios";
 import FileDropzone from "../DropZone";
 import { UserType } from "../../type";
 import { Toast } from "bootstrap";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../redux/Store";
-import { setLoading } from "../../redux/authSlice";
+import { AppDispatch, useAppSelector } from "../../redux/Store";
+import { registerHandle } from "../../redux/authSlice";
 
 const defaultUserData: UserType = {
   dateOfBirth: "",
@@ -18,15 +17,14 @@ const defaultUserData: UserType = {
   occupation: "",
 };
 
-interface CreateAccountProps {
-  setIsSuccessFull: (success: boolean) => void;
-}
-
-function CreateAccount({ setIsSuccessFull }: CreateAccountProps) {
+function CreateAccount() {
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageDataUrl, setImageDataUrl] = useState("");
   const [userData, setUserData] = useState(defaultUserData);
+  const RegisterSuccess = useAppSelector(
+    (state) => state.auth.isRegisterSuccess
+  );
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -63,42 +61,26 @@ function CreateAccount({ setIsSuccessFull }: CreateAccountProps) {
   };
 
   const signUpHandle = async (event: React.FormEvent<HTMLFormElement>) => {
-    dispatch(setLoading(true));
     event.preventDefault();
     const form = event.currentTarget;
 
     if (form.checkValidity()) {
-      const formData = new FormData();
-      if (imageFile) {
-        formData.append("file", imageFile);
-      }
-      formData.append("userData", JSON.stringify(userData));
-      try {
-        const response = await axios.post(`/auth/register`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        if (response.status === 200) {
-          handleReset();
-          setIsSuccessFull(true);
-        }
-      } catch (err) {
-        console.error(err);
-        setIsSuccessFull(false);
-      } finally {
-        dispatch(setLoading(false));
-        const toastLiveExample = document.getElementById("liveToast");
-        if (toastLiveExample) {
-          const toastBootstrap = new Toast(toastLiveExample);
-          toastBootstrap.show();
-        }
+      dispatch(registerHandle({ user: userData, uploadedFile: imageFile }));
+      const toastLiveExample = document.getElementById("liveToast");
+      if (toastLiveExample) {
+        const toastBootstrap = new Toast(toastLiveExample);
+        toastBootstrap.show();
       }
     } else {
       form.classList.add("was-validated");
-      dispatch(setLoading(false));
     }
   };
+
+  useEffect(() => {
+    if (RegisterSuccess) {
+      handleReset();
+    }
+  }, [RegisterSuccess]);
 
   const handleReset = () => {
     setImageFile(null);

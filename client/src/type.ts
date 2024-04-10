@@ -6,6 +6,8 @@ export interface AuthInitialState {
   loading: boolean;
   token: string | null;
   friends: UserType[];
+  isRegisterSuccess: boolean;
+  isLoginSuccess: boolean;
 }
 
 export interface PostInitialState {
@@ -65,5 +67,10 @@ export interface ChatHistory {
 export interface CreatePostProps {
   userId: string;
   description: string;
+  uploadedFile: File | null;
+}
+
+export interface RegisterProps {
+  user: UserType;
   uploadedFile: File | null;
 }
