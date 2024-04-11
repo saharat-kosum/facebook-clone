@@ -7,6 +7,7 @@ import CommentComponent from "./CommentComponent";
 import {
   commentPostThunk,
   deletePostThunk,
+  editPost,
   likePostThunk,
 } from "../../redux/postSlice";
 import { useDispatch } from "react-redux";
@@ -66,6 +67,38 @@ function Post({ post }: PostProps) {
     }
   };
 
+  const editComment = async (
+    post: PostType,
+    commentIndex: number,
+    newDescription: string
+  ) => {
+    const newPost = updateComment(post, commentIndex, newDescription);
+    console.log(newPost);
+    // dispatch(editPost(newPost));
+  };
+
+  const updateComment = (
+    post: PostType,
+    commentIndex: number,
+    newDescription: string
+  ): PostType => {
+    if (!post.comments) {
+      throw new Error("Post has no comments.");
+    }
+
+    if (commentIndex < 0 || commentIndex >= post.comments.length) {
+      throw new Error("Invalid comment index.");
+    }
+
+    const updatedComments = [...post.comments];
+    updatedComments[commentIndex] = {
+      ...updatedComments[commentIndex],
+      description: newDescription,
+    };
+
+    return { ...post, comments: updatedComments };
+  };
+
   return (
     <div
       className="rounded-3 border bg-white shadow-sm py-2 px-2 px-md-3 mt-3"
@@ -113,7 +146,7 @@ function Post({ post }: PostProps) {
             ></i>
             <i
               onClick={() => {
-                if (post._id) {
+                if (post._id && post.userId === userData?._id) {
                   deletePost(post._id);
                 }
               }}
@@ -202,7 +235,13 @@ function Post({ post }: PostProps) {
       {post.comments &&
         post.comments.length > 0 &&
         post.comments.map((comment, index) => (
-          <CommentComponent key={index} comment={comment} />
+          <CommentComponent
+            key={index}
+            comment={comment}
+            editComment={editComment}
+            index={index}
+            post={post}
+          />
         ))}
     </div>
   );

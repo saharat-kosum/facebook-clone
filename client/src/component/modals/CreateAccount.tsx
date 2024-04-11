@@ -21,7 +21,7 @@ function CreateAccount() {
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageDataUrl, setImageDataUrl] = useState("");
-  const [userData, setUserData] = useState(defaultUserData);
+  const [userData, setUserData] = useState({ ...defaultUserData });
   const RegisterSuccess = useAppSelector(
     (state) => state.auth.isRegisterSuccess
   );
@@ -65,12 +65,15 @@ function CreateAccount() {
     const form = event.currentTarget;
 
     if (form.checkValidity()) {
-      dispatch(registerHandle({ user: userData, uploadedFile: imageFile }));
-      const toastLiveExample = document.getElementById("liveToast");
-      if (toastLiveExample) {
-        const toastBootstrap = new Toast(toastLiveExample);
-        toastBootstrap.show();
-      }
+      dispatch(
+        registerHandle({ user: userData, uploadedFile: imageFile })
+      ).finally(() => {
+        const toastLiveExample = document.getElementById("liveToast");
+        if (toastLiveExample) {
+          const toastBootstrap = new Toast(toastLiveExample);
+          toastBootstrap.show();
+        }
+      });
     } else {
       form.classList.add("was-validated");
     }

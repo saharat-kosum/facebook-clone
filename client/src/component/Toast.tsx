@@ -1,11 +1,14 @@
 interface ToastProps {
   message: string;
+  isSuccess: boolean;
 }
 
-function Toast({ message }: ToastProps) {
+function Toast({ message, isSuccess }: ToastProps) {
   return (
     <div
-      className={`toast align-items-center position-fixed end-0 bottom-0 mx-sm-5 mb-4 mx-1`}
+      className={`toast align-items-center position-fixed end-0 bottom-0 mx-sm-5 mb-4 mx-1 text-white ${
+        isSuccess ? "bg-success" : "bg-danger"
+      }`}
       role="alert"
       aria-live="assertive"
       aria-atomic="true"

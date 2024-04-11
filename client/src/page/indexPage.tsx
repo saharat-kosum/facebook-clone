@@ -27,7 +27,7 @@ function IndexPage() {
     if (LoginSuccess) {
       navigate("/home");
     }
-  }, [LoginSuccess]);
+  }, [LoginSuccess, navigate]);
 
   const logInHandle = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -120,6 +120,7 @@ function IndexPage() {
       </div>
       <Toast
         message={RegisterSuccess ? "Sign Up Success!" : "Sign Up Failed!"}
+        isSuccess={RegisterSuccess}
       />
     </div>
   );

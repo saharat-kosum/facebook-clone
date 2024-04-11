@@ -79,6 +79,15 @@ export const createPost = createAsyncThunk(
   }
 );
 
+export const editPost = createAsyncThunk(
+  "postSlice/editPost",
+  async (post: PostType) => {
+    const response = await axios.put(`/posts/${post._id}/like`, post);
+    const data: PostType = response.data;
+    return data;
+  }
+);
+
 export const postSlice = createSlice({
   name: "post",
   initialState,
@@ -101,6 +110,16 @@ export const postSlice = createSlice({
         state.loading = false;
       })
       .addCase(commentPostThunk.fulfilled, (state, action) => {
+        const updatedPosts = state.posts.map((post) => {
+          if (post._id === action.payload._id) {
+            return action.payload;
+          }
+          return post;
+        });
+        state.posts = updatedPosts;
+        state.loading = false;
+      })
+      .addCase(editPost.fulfilled, (state, action) => {
         const updatedPosts = state.posts.map((post) => {
           if (post._id === action.payload._id) {
             return action.payload;

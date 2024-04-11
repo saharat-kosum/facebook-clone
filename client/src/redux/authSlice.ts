@@ -49,7 +49,7 @@ export const loginHandle = createAsyncThunk(
 );
 
 export const registerHandle = createAsyncThunk(
-  "authSlice/loginHandle",
+  "authSlice/registerHandle",
   async ({ user, uploadedFile }: RegisterProps) => {
     const formData = new FormData();
     if (uploadedFile) {
@@ -103,12 +103,14 @@ export const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isLoginSuccess = true;
+        state.loading = false;
       })
       .addCase(loginHandle.rejected, (state) => {
         state.isLoginSuccess = false;
       })
       .addCase(registerHandle.fulfilled, (state) => {
         state.isRegisterSuccess = true;
+        state.loading = false;
       })
       .addCase(registerHandle.rejected, (state) => {
         state.isRegisterSuccess = false;

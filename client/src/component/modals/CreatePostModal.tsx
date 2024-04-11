@@ -76,7 +76,7 @@ function CreatePostModal() {
                   style={{ width: "36px", height: "36px", objectFit: "cover" }}
                 />
                 <div className="">
-                  <div className="">
+                  <div className="text-capitalize">
                     {userData?.firstName} {userData?.lastName}
                   </div>
                   <div className="comment-bg px-1 rounded">
