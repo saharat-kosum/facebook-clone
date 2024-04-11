@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMediaQuery } from "../utils/useMediaQuery";
-import { useAppSelector } from "../redux/Store";
+import { AppDispatch, useAppSelector } from "../redux/Store";
 import { UserType } from "../type";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setLogOut } from "../redux/authSlice";
 
 function NavBar() {
   const isTablet = useMediaQuery("(min-width: 570px)");
@@ -11,12 +13,14 @@ function NavBar() {
   const prefix_img_url = process.env.REACT_APP_PREFIX_URL_IMG;
   const profilePicture = useAppSelector((state) => state.auth.mockIMG);
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const [searchUser, setSearchUser] = useState<UserType[] | undefined>(
     undefined
   );
 
   const logOutHandle = () => {
     sessionStorage.removeItem("userToken");
+    dispatch(setLogOut());
     navigate("/");
   };
 

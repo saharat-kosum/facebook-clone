@@ -6,6 +6,7 @@ import { Toast } from "bootstrap";
 import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector } from "../../redux/Store";
 import { registerHandle } from "../../redux/authSlice";
+import Spinner from "../Spinner";
 
 const defaultUserData: UserType = {
   dateOfBirth: "",
@@ -22,6 +23,7 @@ function CreateAccount() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageDataUrl, setImageDataUrl] = useState("");
   const [userData, setUserData] = useState({ ...defaultUserData });
+  const isLoading = useAppSelector((state) => state.auth.loading);
   const RegisterSuccess = useAppSelector(
     (state) => state.auth.isRegisterSuccess
   );
@@ -250,11 +252,12 @@ function CreateAccount() {
               </div>
               <div className="modal-footer justify-content-center">
                 <button
+                  disabled={isLoading}
                   type="submit"
                   className="btn btn-success"
                   // data-bs-dismiss="modal"
                 >
-                  Sign Up
+                  {isLoading ? <Spinner /> : "Sign Up"}
                 </button>
               </div>
             </div>

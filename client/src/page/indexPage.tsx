@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector } from "../redux/Store";
 import { useNavigate } from "react-router-dom";
 import Toast from "../component/Toast";
+import Spinner from "../component/Spinner";
 
 function IndexPage() {
   const isTablet = useMediaQuery("(min-width: 767px)");
@@ -101,8 +102,12 @@ function IndexPage() {
                   </div>
                 )}
               </div>
-              <button type="submit" className="btn btn-primary w-100 lh-lg">
-                Log in
+              <button
+                disabled={isLoading}
+                type="submit"
+                className="btn btn-primary w-100 lh-lg"
+              >
+                {isLoading ? <Spinner /> : "Log in"}
               </button>
             </form>
             <p className="mt-2">Forgotten password?</p>
