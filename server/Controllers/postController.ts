@@ -132,3 +132,20 @@ export const likePost = async (req: Request, res: Response) => {
     res.status(400).json({ error: "Cant like post" });
   }
 };
+
+export const editPost = async (req: Request, res: Response) => {
+  try {
+    const { post } = req.body;
+    const { id } = req.params;
+
+    if (!post) {
+      return res.status(422).json({ error: "Post data is required" });
+    }
+
+    const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
+    res.status(200).json(updatedPost);
+  } catch (error) {
+    console.error("Cant edit post: ", error);
+    res.status(500).json({ error: "Cant edit post" });
+  }
+};

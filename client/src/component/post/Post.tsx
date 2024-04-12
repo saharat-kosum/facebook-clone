@@ -74,7 +74,7 @@ function Post({ post }: PostProps) {
   ) => {
     const newPost = updateComment(post, commentIndex, newDescription);
     console.log(newPost);
-    // dispatch(editPost(newPost));
+    dispatch(editPost(newPost));
   };
 
   const updateComment = (
@@ -97,6 +97,13 @@ function Post({ post }: PostProps) {
     };
 
     return { ...post, comments: updatedComments };
+  };
+
+  const deleteComment = async (post: PostType, commentIndex: number) => {
+    const updatedComments = post.comments ? [...post.comments] : [];
+    updatedComments.splice(commentIndex, 1);
+    const newPost = { ...post, comments: updatedComments };
+    dispatch(editPost(newPost));
   };
 
   return (

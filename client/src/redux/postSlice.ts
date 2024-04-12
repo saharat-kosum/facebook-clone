@@ -82,7 +82,7 @@ export const createPost = createAsyncThunk(
 export const editPost = createAsyncThunk(
   "postSlice/editPost",
   async (post: PostType) => {
-    const response = await axios.put(`/posts/${post._id}/like`, post);
+    const response = await axios.put(`/posts/${post._id}`, { post });
     const data: PostType = response.data;
     return data;
   }
