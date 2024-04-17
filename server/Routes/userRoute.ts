@@ -18,6 +18,5 @@ router.get("/friend/:id", verifyToken, getFriendData);
 router.get("/:id/friends", verifyToken, getUserFriends);
 router.put("/:id/:friendId", verifyToken, addRemoveFriend);
 router.get("/search", verifyToken, searchUser);
-router.put("/:id", verifyToken, editUser);
 
 export default router;

@@ -7,6 +7,7 @@ const initialState: AuthInitialState = {
   loading: false,
   isLoginSuccess: false,
   isRegisterSuccess: false,
+  isEditSuccess: false,
   user: null,
   profile: null,
   friends: [],
@@ -65,6 +66,23 @@ export const registerHandle = createAsyncThunk(
   }
 );
 
+export const editProfile = createAsyncThunk(
+  "authSlice/editProfile",
+  async ({ user, uploadedFile }: RegisterProps) => {
+    const formData = new FormData();
+    if (uploadedFile) {
+      formData.append("file", uploadedFile);
+    }
+    formData.append("userData", JSON.stringify(user));
+    const { data } = await axios.put(`/users/${user._id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return data;
+  }
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -115,6 +133,14 @@ export const authSlice = createSlice({
       })
       .addCase(registerHandle.rejected, (state) => {
         state.isRegisterSuccess = false;
+      })
+      .addCase(editProfile.fulfilled, (state, action) => {
+        state.isEditSuccess = true;
+        state.loading = false;
+        state.profile = action.payload;
+      })
+      .addCase(editProfile.rejected, (state) => {
+        state.isEditSuccess = false;
       })
       .addMatcher(
         (action) =>

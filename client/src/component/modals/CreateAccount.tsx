@@ -5,8 +5,9 @@ import { UserType } from "../../type";
 import { Toast } from "bootstrap";
 import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector } from "../../redux/Store";
-import { registerHandle } from "../../redux/authSlice";
+import { editProfile, registerHandle } from "../../redux/authSlice";
 import Spinner from "../Spinner";
+import { useParams } from "react-router-dom";
 
 const defaultUserData: UserType = {
   dateOfBirth: "",
@@ -28,6 +29,16 @@ function CreateAccount() {
     (state) => state.auth.isRegisterSuccess
   );
   const dispatch = useDispatch<AppDispatch>();
+  const params = useParams();
+  const [mode, setMode] = useState("Register");
+  const profileDetail = useAppSelector((state) => state.auth.profile);
+
+  useEffect(() => {
+    if (params.userId && profileDetail) {
+      setMode("Edit");
+      setUserData({ ...profileDetail });
+    }
+  }, [params.userId, profileDetail]);
 
   useEffect(() => {
     if (dateOfBirth) {
@@ -81,6 +92,33 @@ function CreateAccount() {
     }
   };
 
+  const editProfileHandle = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+
+    if (form.checkValidity()) {
+      dispatch(
+        editProfile({ user: userData, uploadedFile: imageFile })
+      ).finally(() => {
+        const toastLiveExample = document.getElementById("liveToast");
+        if (toastLiveExample) {
+          const toastBootstrap = new Toast(toastLiveExample);
+          toastBootstrap.show();
+        }
+      });
+    } else {
+      form.classList.add("was-validated");
+    }
+  };
+
+  const submitHandle = async (event: React.FormEvent<HTMLFormElement>) => {
+    if (mode === "Register") {
+      await signUpHandle(event);
+    } else if (mode === "Edit") {
+      await editProfileHandle(event);
+    }
+  };
+
   useEffect(() => {
     if (RegisterSuccess) {
       handleReset();
@@ -92,6 +130,7 @@ function CreateAccount() {
     setImageDataUrl("");
     setUserData(defaultUserData);
     setDateOfBirth("");
+    setMode("Register");
     const form = document.querySelector(".needs-validation");
     if (form) {
       form.classList.remove("was-validated");
@@ -111,7 +150,7 @@ function CreateAccount() {
           <form
             className="needs-validation"
             noValidate
-            onSubmit={(e) => signUpHandle(e)}
+            onSubmit={(e) => submitHandle(e)}
           >
             <div className="modal-content">
               <div className="modal-header">

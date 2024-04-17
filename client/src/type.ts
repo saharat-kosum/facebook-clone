@@ -8,6 +8,7 @@ export interface AuthInitialState {
   friends: UserType[];
   isRegisterSuccess: boolean;
   isLoginSuccess: boolean;
+  isEditSuccess: boolean;
 }
 
 export interface PostInitialState {

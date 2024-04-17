@@ -20,6 +20,7 @@ import Post from "../Models/PostModel";
 import ws from "ws";
 import { ChatHistoryType } from "../Type";
 import ChatHistory from "../Models/ChatHistoryModel";
+import { editUser } from "../Controllers/userController";
 
 dotenv.config();
 const app = express();
@@ -58,6 +59,7 @@ const upload = multer({ storage: storage });
 
 app.post("/auth/register", upload.single("file"), register);
 app.post("/posts", verifyToken, upload.single("file"), createPost);
+app.put("/users/:id", verifyToken, upload.single("file"), editUser);
 
 //routes
 app.use("/auth", authRoutes);

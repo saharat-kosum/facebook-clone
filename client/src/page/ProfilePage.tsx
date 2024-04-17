@@ -9,6 +9,8 @@ import Loading from "../component/Loading";
 import { useParams } from "react-router-dom";
 import { getProfile, getUserDetail } from "../redux/authSlice";
 import { getProfilePost } from "../redux/postSlice";
+import Toast from "../component/Toast";
+import CreateAccount from "../component/modals/CreateAccount";
 
 function ProfilePage() {
   const isLaptop = useMediaQuery("(min-width: 1000px)");
@@ -20,6 +22,7 @@ function ProfilePage() {
   const postLoading = useAppSelector((state) => state.post.loading);
   const posts = useAppSelector((state) => state.post.posts);
   const profileDetail = useAppSelector((state) => state.auth.profile);
+  const editSuccess = useAppSelector((state) => state.auth.isEditSuccess);
 
   useEffect(() => {
     if (token && token.length > 0 && params.userId) {
@@ -43,6 +46,13 @@ function ProfilePage() {
       <NavBar />
       <Loading isShow={authLoading || postLoading} />
       <div className="container" style={{ minHeight: "94vh" }}>
+        <CreateAccount />
+        <Toast
+          message={
+            editSuccess ? "Edit Profile Success!" : "Edit Profile Failed!"
+          }
+          isSuccess={editSuccess}
+        />
         <div className={`${isLaptop ? "d-flex" : ""} pb-3 gap-3`}>
           <div
             className={`${isLaptop ? "" : "m-auto"} w-100`}

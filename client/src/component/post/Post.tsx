@@ -248,6 +248,7 @@ function Post({ post }: PostProps) {
             editComment={editComment}
             index={index}
             post={post}
+            deleteComment={deleteComment}
           />
         ))}
     </div>

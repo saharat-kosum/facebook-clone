@@ -11,9 +11,16 @@ interface CommentProps {
   ) => Promise<void>;
   index: number;
   post: PostType;
+  deleteComment: (post: PostType, commentIndex: number) => Promise<void>;
 }
 
-function CommentComponent({ comment, editComment, index, post }: CommentProps) {
+function CommentComponent({
+  comment,
+  editComment,
+  index,
+  post,
+  deleteComment,
+}: CommentProps) {
   const profilePicture = useAppSelector((state) => state.auth.mockIMG);
   const prefix_img_url = process.env.REACT_APP_PREFIX_URL_IMG;
   const [isEditComment, setIsEditComment] = useState(false);
@@ -40,8 +47,28 @@ function CommentComponent({ comment, editComment, index, post }: CommentProps) {
           <div className="text-capitalize" style={{ fontWeight: "450" }}>
             {comment.firstName} {comment.lastName}
           </div>
-          <div onClick={() => setIsEditComment(true)}>
-            <i className="bi bi-three-dots hover-cursor"></i>
+          <div data-bs-toggle="dropdown">
+            <i className="bi bi-three-dots hover-cursor">
+              <ul
+                className="dropdown-menu end-0"
+                style={{ left: "unset", width: "fit-content" }}
+              >
+                <li
+                  onClick={() => {
+                    setIsEditComment(true);
+                  }}
+                >
+                  <div className="dropdown-item hover-cursor">Edit</div>
+                </li>
+                <li
+                  onClick={() => {
+                    deleteComment(post, index);
+                  }}
+                >
+                  <div className="dropdown-item hover-cursor">Delete</div>
+                </li>
+              </ul>
+            </i>
           </div>
         </div>
         {isEditComment ? (

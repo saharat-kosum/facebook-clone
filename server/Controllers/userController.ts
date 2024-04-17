@@ -107,13 +107,19 @@ export const searchUser = async (req: Request, res: Response) => {
 export const editUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { user } = req.body;
+    const userData = JSON.parse(req.body.userData);
 
-    if (!user) {
+    if (!userData) {
       return res.status(422).json({ error: "User data is required" });
     }
 
-    const updatedUser = await User.findByIdAndUpdate(id, user, { new: true });
+    if (req.file) {
+      userData.picturePath = req.file.filename;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(id, userData, {
+      new: true,
+    });
     res.status(200).json(updatedUser);
   } catch (error) {
     console.error("Edit user error: ", error);
