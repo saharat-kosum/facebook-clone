@@ -91,13 +91,13 @@ wss.on("connection", (connection, req) => {
         // console.log(`Received message from user ${userId}: ${message}`);
         if (message && receiver) {
           const targetSocket = clients.get(receiver);
+          const sendPayload: ChatHistoryType = {
+            sender: userId,
+            receiver,
+            message: message,
+          };
+          await ChatHistory.create(sendPayload);
           if (targetSocket) {
-            const sendPayload: ChatHistoryType = {
-              sender: userId,
-              receiver,
-              message: message,
-            };
-            await ChatHistory.create(sendPayload);
             targetSocket.send(JSON.stringify(sendPayload));
           }
         }
