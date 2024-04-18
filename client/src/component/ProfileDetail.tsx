@@ -10,6 +10,7 @@ interface ProfileProps {
 function ProfileDetail({ props }: ProfileProps) {
   const prefix_img_url = process.env.REACT_APP_PREFIX_URL_IMG;
   const profilePicture = useAppSelector((state) => state.auth.mockIMG);
+  const userData = useAppSelector((state) => state.auth.user);
 
   const parseDate = (date: Date) => {
     const formattedDate = format(new Date(date), "dd MMM yyyy");
@@ -89,7 +90,16 @@ function ProfileDetail({ props }: ProfileProps) {
         <i className="bi bi-calendar-week me-2"></i>
         {props.dateOfBirth ? convertTimestampToDate(props.dateOfBirth) : null}
       </p>
-      <div className="btn btn-secondary w-100 me-2">Edit Profile</div>
+      <div
+        className={
+          "btn btn-secondary w-100 me-2 " +
+          (props._id === userData?._id ? "visible" : "invisible")
+        }
+        data-bs-toggle="modal"
+        data-bs-target="#createAccountModal"
+      >
+        Edit Profile
+      </div>
     </div>
   );
 }

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { parseISO, format } from "date-fns";
+import React, { useCallback, useEffect, useState } from "react";
+import { parseISO, format, parse } from "date-fns";
 import FileDropzone from "../DropZone";
 import { UserType } from "../../type";
 import { Toast } from "bootstrap";
@@ -50,6 +50,14 @@ function CreateAccount() {
       }));
     }
   }, [dateOfBirth]);
+
+  useEffect(() => {
+    if (userData.dateOfBirth && mode === "Edit") {
+      const parsedDate = parse(userData.dateOfBirth, "d MMM yyyy", new Date());
+      const inputValue = format(parsedDate, "yyyy-MM-dd");
+      setDateOfBirth(inputValue);
+    }
+  }, [mode, userData.dateOfBirth]);
 
   useEffect(() => {
     if (imageFile) {
@@ -119,23 +127,35 @@ function CreateAccount() {
     }
   };
 
-  useEffect(() => {
-    if (RegisterSuccess) {
-      handleReset();
-    }
-  }, [RegisterSuccess]);
-
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setImageFile(null);
     setImageDataUrl("");
-    setUserData(defaultUserData);
-    setDateOfBirth("");
-    setMode("Register");
+
+    if (mode === "Register") {
+      setUserData(defaultUserData);
+      setDateOfBirth("");
+    } else if (mode === "Edit" && profileDetail) {
+      setUserData({ ...profileDetail });
+    }
+
     const form = document.querySelector(".needs-validation");
     if (form) {
       form.classList.remove("was-validated");
     }
-  };
+  }, [
+    mode,
+    setDateOfBirth,
+    setUserData,
+    profileDetail,
+    setImageDataUrl,
+    setImageFile,
+  ]);
+
+  useEffect(() => {
+    if (RegisterSuccess) {
+      handleReset();
+    }
+  }, [RegisterSuccess, handleReset]);
 
   return (
     <div>
@@ -155,7 +175,7 @@ function CreateAccount() {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title" id="createAccountModalLabel">
-                  Sign Up
+                  {mode === "Register" ? "Sign Up" : "Edit Profile"}
                 </h5>
                 <button
                   type="button"
@@ -208,17 +228,23 @@ function CreateAccount() {
                     required
                   />
                   <div className="invalid-feedback">E-mail is required.</div>
-                  <input
-                    type="password"
-                    className="form-control mt-3"
-                    id="exampleInputPassword1"
-                    placeholder="Password"
-                    name="password"
-                    value={userData.password}
-                    onChange={(e) => handleChange(e)}
-                    required
-                  />
-                  <div className="invalid-feedback">Password is required.</div>
+                  {mode === "Register" && (
+                    <>
+                      <input
+                        type="password"
+                        className="form-control mt-3"
+                        id="exampleInputPassword1"
+                        placeholder="Password"
+                        name="password"
+                        value={userData.password}
+                        onChange={(e) => handleChange(e)}
+                        required
+                      />
+                      <div className="invalid-feedback">
+                        Password is required.
+                      </div>
+                    </>
+                  )}
                   <label htmlFor="exampleInputBirthday1" className="mt-3">
                     Date of birth
                   </label>
@@ -296,7 +322,13 @@ function CreateAccount() {
                   className="btn btn-success"
                   // data-bs-dismiss="modal"
                 >
-                  {isLoading ? <Spinner /> : "Sign Up"}
+                  {isLoading ? (
+                    <Spinner />
+                  ) : mode === "Register" ? (
+                    "Sign Up"
+                  ) : (
+                    "Save"
+                  )}
                 </button>
               </div>
             </div>
