@@ -52,7 +52,7 @@ function Contact() {
   const addFriend = async (friendId: string) => {
     dispatch(setLoading(true));
     try {
-      const response = await axios.put(`$/users/${userData?._id}/${friendId}`, {
+      const response = await axios.put(`/users/${userData?._id}/${friendId}`, {
         userId: userData?._id,
       });
       if (response.status === 200) {
