@@ -51,7 +51,7 @@ function NavBar() {
   return (
     <nav
       className="navbar sticky-top bg-white shadow-sm"
-      style={{ height: "6vh", padding: "unset" }}
+      style={{ padding: "unset" }}
     >
       <div className="container-fluid">
         <div className="d-flex align-items-center">
