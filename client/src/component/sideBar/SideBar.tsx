@@ -32,6 +32,11 @@ function SideBar() {
       <li
         className="rounded p-2 sidebar-hover-color w-100 text-start lh-base text-capitalize"
         onClick={() => profile()}
+        style={{
+          textOverflow: "ellipsis",
+          overflow: "hidden",
+          whiteSpace: "nowrap",
+        }}
       >
         <img
           alt="profile"

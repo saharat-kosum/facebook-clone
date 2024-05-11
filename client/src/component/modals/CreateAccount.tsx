@@ -105,15 +105,18 @@ function CreateAccount() {
     const form = event.currentTarget;
 
     if (form.checkValidity()) {
-      dispatch(
-        editProfile({ user: userData, uploadedFile: imageFile })
-      ).finally(() => {
-        const toastLiveExample = document.getElementById("liveToast");
-        if (toastLiveExample) {
-          const toastBootstrap = new Toast(toastLiveExample);
-          toastBootstrap.show();
-        }
-      });
+      dispatch(editProfile({ user: userData, uploadedFile: imageFile }))
+        .then(() => {
+          setImageFile(null);
+          setImageDataUrl("");
+        })
+        .finally(() => {
+          const toastLiveExample = document.getElementById("liveToast");
+          if (toastLiveExample) {
+            const toastBootstrap = new Toast(toastLiveExample);
+            toastBootstrap.show();
+          }
+        });
     } else {
       form.classList.add("was-validated");
     }
