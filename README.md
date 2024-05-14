@@ -1,10 +1,10 @@
-# Facebook clone :fa-facebook-official:
+# Facebook clone
 
-This project is designed for honing back-end development skills, specifically focusing on the practice of Node.js and Express.Js.
+This project aims to master React.js, Express.js, MongoDB, WebSockets, and Bootstrap by recreating a social media platform's core features. From user authentication to real-time messaging, each aspect serves as a practical exercise in dynamic web app development.
 
 ## Tech stack
 
-**Frontend : [Link](https://github.com/saharat-kosum/facebook-clone-client "Link")**
+**Frontend**
 
 - React.Js
 
@@ -44,35 +44,4 @@ This project is designed for honing back-end development skills, specifically fo
 
 - Live chat
 
-## Installation
-
-Clone the project
-
-    git clone https://github.com/saharat-kosum/facebook-clone-server.git
-
-Change directory
-
-    cd facebook-clone
-    cd server
-
-Install dependencies
-
-    npm install
-
-Start client
-
-    npm start
-
-Start frontend please follow :fa-arrow-right: [Link](https://github.com/saharat-kosum/facebook-clone-client "Link")
-
-## Environment Variables
-
-To run this project, you will need to add the following environment variables to your .env file
-
-`PORT` = Port that you want to run this project
-
-`DBPassWord` = Your mongodb password
-
-`DATABASE` = Your mongodb url
-
-`JWT_SECRET` = Your JWT secret
+- Edit Profile
