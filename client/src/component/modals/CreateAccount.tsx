@@ -172,6 +172,7 @@ function CreateAccount() {
         <div className="modal-dialog modal-dialog-scrollable">
           <form
             className="needs-validation"
+            aria-label="form"
             noValidate
             onSubmit={(e) => submitHandle(e)}
           >
