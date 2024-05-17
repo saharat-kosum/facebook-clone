@@ -3,8 +3,10 @@ import { screen, fireEvent, waitFor } from "@testing-library/react";
 import CreateAccount from "./CreateAccount";
 import { BrowserRouter } from "react-router-dom";
 import { renderWithProviders } from "../../utils/test-utils";
-import { AuthInitialState, UserType } from "../../type";
-import extraReducers from "../../redux/authSlice";
+import { AuthInitialState } from "../../type";
+import axios from "axios";
+
+vi.mock("axios");
 
 describe("Create Account Component", () => {
   const renderComponent = (auth: AuthInitialState | undefined) =>
@@ -132,7 +134,7 @@ describe("Create Account Component", () => {
     fireEvent.submit(screen.getByRole("form", { hidden: true }));
 
     await waitFor(() => {
-      expect(extraReducers(undefined, { type: "auth/registerHandle/pending" }));
+      expect(axios.post).toHaveBeenCalled();
     });
   });
 
