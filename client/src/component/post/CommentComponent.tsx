@@ -76,12 +76,13 @@ function CommentComponent({
             <input
               className="form-control rounded-pill"
               type="text"
-              placeholder="Write a comment..."
+              placeholder="Edit a comment..."
               value={editedDescription}
               onChange={(e) => setEditedDescription(e.target.value)}
             />
             <i
               className="bi bi-send-fill create-hover-color rounded-circle p-2"
+              role="button"
               onClick={() => {
                 editComment(post, index, editedDescription);
                 setIsEditComment(false);

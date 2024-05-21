@@ -113,7 +113,7 @@ function Post({ post }: PostProps) {
     >
       <div className="d-flex align-items-center gap-2 mb-2">
         <img
-          alt="profile"
+          alt="postProfile"
           className="rounded-circle border hover-cursor"
           src={
             post.userPicturePath
@@ -157,6 +157,7 @@ function Post({ post }: PostProps) {
                   deletePost(post._id);
                 }
               }}
+              role="deleteBtn"
               className="bi bi-x-lg create-hover-color rounded-circle p-2"
               style={{ height: "fit-content" }}
             ></i>
@@ -231,6 +232,7 @@ function Post({ post }: PostProps) {
         />
         <i
           className="bi bi-send-fill create-hover-color rounded-circle p-2"
+          role="commentBtn"
           onClick={() => {
             if (post._id) {
               commentPost(post._id, commentInPost);
