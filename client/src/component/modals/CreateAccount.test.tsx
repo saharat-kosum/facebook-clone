@@ -22,19 +22,7 @@ describe("Create Account Component", () => {
     );
 
   it("renders the component correctly (Sign Up)", () => {
-    const store: AuthInitialState = {
-      mode: "Register",
-      user: null,
-      profile: null,
-      mockIMG: "",
-      loading: false,
-      token: "null",
-      friends: [],
-      isRegisterSuccess: false,
-      isLoginSuccess: false,
-      isEditSuccess: false,
-    };
-    renderComponent(store);
+    renderComponent(undefined);
     expect(screen.getAllByText("Sign Up")).toHaveLength(2);
   });
 

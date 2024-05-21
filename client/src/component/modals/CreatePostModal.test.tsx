@@ -4,10 +4,20 @@ import { BrowserRouter } from "react-router-dom";
 import { renderWithProviders } from "../../utils/test-utils";
 import { AuthInitialState } from "../../type";
 import CreatePostModal from "./CreatePostModal";
-import extraReducers from "../../redux/postSlice";
 import axios from "axios";
 
 vi.mock("axios");
+
+const user = {
+  _id: "123",
+  dateOfBirth: "",
+  firstName: "",
+  lastName: "",
+  email: "",
+  password: "",
+  location: "",
+  occupation: "",
+};
 
 describe("Create Post Component", () => {
   const renderComponent = (auth: AuthInitialState | undefined) =>
@@ -62,45 +72,64 @@ describe("Create Post Component", () => {
     });
   });
 
-  // it("handles post creation correctly", async () => {
-  //   renderComponent(undefined);
+  it("handles post creation correctly", async () => {
+    const auth: AuthInitialState = {
+      mode: "Register",
+      user: user,
+      profile: null,
+      mockIMG: "",
+      loading: false,
+      token: "null",
+      friends: [],
+      isRegisterSuccess: false,
+      isLoginSuccess: false,
+      isEditSuccess: false,
+    };
+    renderComponent(auth);
 
-  //   const textArea = screen.getByPlaceholderText(
-  //     "What's on your mind"
-  //   ) as HTMLTextAreaElement;
-  //   fireEvent.change(textArea, { target: { value: "John" } });
+    const textArea = screen.getByPlaceholderText(
+      "What's on your mind"
+    ) as HTMLTextAreaElement;
+    fireEvent.change(textArea, { target: { value: "John" } });
 
-  //   const file = new File(["hello"], "hello.png", { type: "image/png" });
-  //   const dropzone = screen.getByTestId("file-dropzone");
+    const file = new File(["hello"], "hello.png", { type: "image/png" });
+    const dropzone = screen.getByTestId("file-dropzone");
 
-  //   fireEvent.change(dropzone, { target: { files: [file] } });
+    fireEvent.change(dropzone, { target: { files: [file] } });
 
-  //   const postBtn = screen.getByText("Post");
-  //   fireEvent.click(postBtn);
+    const postBtn = screen.getByText("Post");
+    fireEvent.click(postBtn);
 
-  //   const formData = new FormData();
-  //   formData.append("file", file);
-  //   formData.append(
-  //     "postData",
-  //     JSON.stringify({ userId: "", description: "John" })
-  //   );
+    await waitFor(() => {
+      expect(axios.post).toHaveBeenCalled();
+    });
+  });
 
-  //   await waitFor(() => {
-  //     expect(axios.post).toHaveBeenCalledWith("/posts", formData);
-  //   });
-  // });
+  it("clears input fields after posting", async () => {
+    const auth: AuthInitialState = {
+      mode: "Register",
+      user: user,
+      profile: null,
+      mockIMG: "",
+      loading: false,
+      token: "null",
+      friends: [],
+      isRegisterSuccess: false,
+      isLoginSuccess: false,
+      isEditSuccess: false,
+    };
+    renderComponent(auth);
 
-  // it("clears input fields after posting", async () => {
-  //   renderComponent({ user: { _id: "123", firstName: "John", lastName: "Doe", picturePath: "path/to/picture" } });
+    const textArea = screen.getByPlaceholderText(
+      "What's on your mind"
+    ) as HTMLTextAreaElement;
+    fireEvent.change(textArea, { target: { value: "Some text" } });
 
-  //   const textArea = screen.getByPlaceholderText("What's on your mind");
-  //   fireEvent.change(textArea, { target: { value: "Some text" } });
+    const postBtn = screen.getByText("Post");
+    fireEvent.click(postBtn);
 
-  //   const postBtn = screen.getByText("Post");
-  //   fireEvent.click(postBtn);
-
-  //   await waitFor(() => {
-  //     expect(textArea.value).toBe("");
-  //   });
-  // });
+    await waitFor(() => {
+      expect(textArea.value).toBe("");
+    });
+  });
 });
