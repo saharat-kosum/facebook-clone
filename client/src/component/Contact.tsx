@@ -140,6 +140,7 @@ function Contact() {
                 </div>
                 <i
                   className="bi bi-person-plus-fill rounded-circle p-2 sidebar-hover-color"
+                  role="button"
                   onClick={() => {
                     if (user._id) {
                       addFriend(user._id);
@@ -192,6 +193,7 @@ function Contact() {
                 </div>
                 <i
                   className="bi bi-person-dash-fill rounded-circle p-2 sidebar-hover-color "
+                  role="rmButton"
                   onClick={() => {
                     if (friend._id) {
                       removeFriend(friend._id);
