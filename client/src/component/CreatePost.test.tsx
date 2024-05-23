@@ -1,14 +1,16 @@
 import { describe, it, expect, vi } from "vitest";
 import { screen, fireEvent, waitFor } from "@testing-library/react";
-import { renderWithProviders } from "../../utils/test-utils";
 import { BrowserRouter } from "react-router-dom";
-import { AuthInitialState } from "../../type";
-import SideBar, { sideBarArray } from "./SideBar";
+import { AuthInitialState } from "../type";
+import { renderWithProviders } from "../utils/test-utils";
+import CreatePost from "./CreatePost";
+import { useMediaQuery } from "../utils/useMediaQuery";
 
+vi.mock("../utils/useMediaQuery");
 vi.stubEnv("REACT_APP_PREFIX_URL_IMG", "");
 
 const user = {
-  _id: "user1",
+  _id: "userId1",
   dateOfBirth: "",
   firstName: "first",
   lastName: "last",
@@ -32,11 +34,11 @@ const auth: AuthInitialState = {
   isEditSuccess: false,
 };
 
-describe("Sidebar Component", () => {
+describe("Create Post Component", () => {
   const renderComponent = (auth: AuthInitialState | undefined) =>
     renderWithProviders(
       <BrowserRouter>
-        <SideBar />
+        <CreatePost />
       </BrowserRouter>,
       {
         preloadedState: {
@@ -45,24 +47,17 @@ describe("Sidebar Component", () => {
       }
     );
 
-  afterEach(() => {
-    vi.unstubAllEnvs();
-  });
-
-  it("sidebar render correctly", () => {
+  it("render Post Component correctly", () => {
     renderComponent(auth);
-
-    const sidebar = screen.getByRole("list");
-    expect(sidebar).toBeInTheDocument();
 
     const profileImage = screen.getByAltText("profile");
     expect(profileImage).toBeInTheDocument();
 
     const href = profileImage.getAttribute("src");
     expect(href).toBe("/picture");
-
-    const userName = screen.getByText(`first last`);
-    expect(userName).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("What's on your mind ?")
+    ).toBeInTheDocument();
   });
 
   it("render mock profile image", () => {
@@ -76,23 +71,21 @@ describe("Sidebar Component", () => {
     expect(href).toBe("/mock");
   });
 
-  it("should display sidebar items", () => {
+  it("displays buttons correctly when screen size is mobile", () => {
+    (useMediaQuery as jest.Mock).mockReturnValue(true);
     renderComponent(auth);
-    sideBarArray.forEach((item) => {
-      const sidebarItem = screen.getByText(item.display);
-      expect(sidebarItem).toBeInTheDocument();
-      expect(sidebarItem.firstChild).toHaveClass(`bi ${item.icon}`);
-    });
+
+    expect(screen.getByText("Live video")).toBeInTheDocument();
+    expect(screen.getByText("Photo/Video")).toBeInTheDocument();
+    expect(screen.getByText("Feeling/Activity")).toBeInTheDocument();
   });
 
-  it("should navigate to the profile page on clicking the profile", async () => {
+  it("does not display text labels for buttons when screen size is not mobile", () => {
+    (useMediaQuery as jest.Mock).mockReturnValue(false);
     renderComponent(auth);
 
-    const profileItem = screen.getByText(`first last`);
-    fireEvent.click(profileItem);
-
-    await waitFor(() => {
-      expect(window.location.pathname).toBe(`/profile/${user._id}`);
-    });
+    expect(screen.queryByText("Live video")).not.toBeInTheDocument();
+    expect(screen.queryByText("Photo/Video")).not.toBeInTheDocument();
+    expect(screen.queryByText("Feeling/Activity")).not.toBeInTheDocument();
   });
 });
