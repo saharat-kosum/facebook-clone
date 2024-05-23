@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { screen, fireEvent, waitFor } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import { AuthInitialState } from "../type";
 import { renderWithProviders } from "../utils/test-utils";
