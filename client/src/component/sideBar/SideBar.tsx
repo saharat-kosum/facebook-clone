@@ -3,7 +3,7 @@ import "./Sidebar.css";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../redux/Store";
 
-const sideBarArray = [
+export const sideBarArray = [
   { display: "Friends", icon: "bi-people-fill" },
   { display: "Memories", icon: "bi-clock-fill" },
   { display: "Saved", icon: "bi-save2" },
@@ -51,7 +51,10 @@ function SideBar() {
         {userData?.firstName} {userData?.lastName}
       </li>
       {sideBarArray.map((sidebar) => (
-        <li className="rounded p-2 sidebar-hover-color w-100 text-start lh-base">
+        <li
+          className="rounded p-2 sidebar-hover-color w-100 text-start lh-base"
+          key={sidebar.display}
+        >
           <i
             className={`pe-2 fs-4 bi ${sidebar.icon}`}
             style={{ color: "#1B74E4" }}
