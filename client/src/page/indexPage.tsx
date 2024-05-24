@@ -84,18 +84,18 @@ function IndexPage() {
                   onChange={(e) => handleChange(e)}
                   required
                 />
-                <div className="invalid-feedback">E-mail is required.</div>
+                <div className="invalid-feedback">Please input E-mail</div>
               </div>
               <div className="mb-3">
                 <input
                   type="password"
                   className="form-control lh-lg"
-                  placeholder="Password"
+                  placeholder="password"
                   name="password"
                   onChange={(e) => handleChange(e)}
                   required
                 />
-                <div className="invalid-feedback">Password is required.</div>
+                <div className="invalid-feedback">Please input Password</div>
                 {LoginSuccess && (
                   <div className="mt-1 text-danger">
                     Invalid E-mail or Password
