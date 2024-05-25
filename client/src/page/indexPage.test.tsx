@@ -86,43 +86,23 @@ describe("Index Page", () => {
     });
   });
 
-  // it("should navigate to home on successful login", async () => {
-  //   const mockNavigate = vi.fn();
-  //   vi.mock("react-router-dom", () => ({
-  //     ...vi.importActual("react-router-dom"),
-  //     useNavigate: () => mockNavigate,
-  //   }));
+  it("should navigate to home on successful login", async () => {
+    renderComponent({ ...auth, isLoginSuccess: true });
 
-  //   renderComponent({ ...auth, isLoginSuccess: true });
+    await waitFor(() => {
+      expect(window.location.pathname).toBe("/home");
+    });
+  });
 
-  //   await waitFor(() => {
-  //     expect(mockNavigate).toHaveBeenCalledWith("/home");
-  //   });
-  // });
+  it("should render the toast message for registration success", () => {
+    renderComponent({ ...auth, isRegisterSuccess: true });
 
-  // it("should render the loading spinner when loading", () => {
-  //   renderComponent({ ...auth, loading: true });
+    expect(screen.getByText(/Sign Up Success!/i)).toBeInTheDocument();
+  });
 
-  //   expect(screen.getByTestId("spinner")).toBeInTheDocument();
-  // });
+  it("should render the toast message for registration failure", () => {
+    renderComponent({ ...auth, isRegisterSuccess: false });
 
-  // it("should render the create account modal", () => {
-  //   renderComponent(auth);
-
-  //   fireEvent.click(screen.getByText(/Create new account/i));
-
-  //   expect(screen.getByText(/Create Account/i)).toBeInTheDocument();
-  // });
-
-  // it("should render the toast message for registration success", () => {
-  //   renderComponent({ ...auth, isRegisterSuccess: true });
-
-  //   expect(screen.getByText(/Sign Up Success!/i)).toBeInTheDocument();
-  // });
-
-  // it("should render the toast message for registration failure", () => {
-  //   renderComponent({ ...auth, isRegisterSuccess: false });
-
-  //   expect(screen.getByText(/Sign Up Failed!/i)).toBeInTheDocument();
-  // });
+    expect(screen.getByText(/Sign Up Failed!/i)).toBeInTheDocument();
+  });
 });
